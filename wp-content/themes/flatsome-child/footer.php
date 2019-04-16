@@ -29,7 +29,7 @@ global $flatsome_opt;
     bottom: 10px;
     z-index: 9000;
     display: block;
-    background: #22253c;
+    background: #dd3333;
     color: #fff;
     padding-top: 5px;padding-bottom:5px; padding-left:12px; padding-right: 12px;
     border-radius: 99px;
