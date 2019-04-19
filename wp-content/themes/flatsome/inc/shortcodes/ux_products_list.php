@@ -4,7 +4,7 @@
 function ux_products_list($atts, $content = null, $tag) {
   global $woocommerce;
 
-  extract(shortcode_atts(array(
+  extract( $atts = shortcode_atts( array(
     'title' => '',
     'ids' => '',
     'products' => '8',

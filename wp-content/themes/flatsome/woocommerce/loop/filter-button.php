@@ -6,7 +6,7 @@
  */
 
 $layout = get_theme_mod( 'category_sidebar', 'left-sidebar' );
-if ( 'none' === $layout ) {
+if ( 'none' === $layout || get_theme_mod( 'html_shop_page_content' ) ) {
 	return;
 }
 

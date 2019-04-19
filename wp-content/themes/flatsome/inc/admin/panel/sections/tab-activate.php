@@ -60,17 +60,15 @@
 	<div class="inner-panel">
   <?php
 
-     // Sold at
-    $sold = date("F jS, Y",strtotime(get_option( $slug . '_wup_sold_at', '' )));
 
-    // Supported until
-    $support_ends = date("F jS, Y",strtotime(get_option( $slug . '_wup_supported_until', '' )));
+    $sold         = date( "F jS, Y", strtotime( get_option( $slug . '_wup_sold_at', '' ) ) );
+    $support_ends = date( "F jS, Y", strtotime( get_option( $slug . '_wup_supported_until', '' ) ) );
 
-    $support_message = '<span style="color:green">Active</span';
+    $support_message = '<span style="color:green">Active</span>';
 
     // If support expired
-    if(flatsome_is_support_expired($slug)){
-      $support_message = '<strong style="color:red;">Expired</strong>';
+    if ( flatsome_is_support_expired( $slug ) ) {
+	    $support_message = flatsome_is_invalid_support_time( $support_ends ) ? '<strong style="color:orange;">Invalid (please try to re-update)</strong>' : '<strong style="color:red;">Expired</strong>';
     }
 
     // Buyer

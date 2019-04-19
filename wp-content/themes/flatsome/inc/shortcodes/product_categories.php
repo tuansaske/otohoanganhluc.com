@@ -196,7 +196,7 @@ function ux_product_categories($atts, $content = null, $tag) {
             if($grid[$current]['size'] == 'medium') $thumbnail_size = 'medium';
         }
 
-        $thumbnail_id = get_woocommerce_term_meta( $category->term_id, 'thumbnail_id', true  );
+        $thumbnail_id = get_term_meta( $category->term_id, 'thumbnail_id', true  );
 
         if ( $thumbnail_id ) {
           $image = wp_get_attachment_image_src( $thumbnail_id, $thumbnail_size);

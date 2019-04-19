@@ -35,6 +35,8 @@ add_action( 'admin_init', 'ux_builder_admin_setup' );
 function ux_builder_admin_bar_link() {
 	global $wp_admin_bar;
 	global $post;
+	global $wpdb;
+	$is_woocommerce = function_exists( 'is_woocommerce' );
 
 	if ( ! is_page() && ! is_single() ) {
 		return;
@@ -43,7 +45,7 @@ function ux_builder_admin_bar_link() {
 		return;
 	}
 	// Do not show UX Builder link on homepage if it's Shop page.
-	if ( function_exists( 'is_woocommerce' ) && is_shop() && is_front_page() ) {
+	if ( $is_woocommerce && is_shop() && is_front_page() ) {
 		return;
 	}
 
@@ -56,6 +58,22 @@ function ux_builder_admin_bar_link() {
 			'title'  => 'Edit with UX Builder',
 			'href'   => ux_builder_edit_url( $post->ID ),
 		) );
+	}
+
+	// Add link for editing custom product layout block.
+	if ( $is_woocommerce && is_product() && get_theme_mod( 'product_layout' ) === 'custom' && array_key_exists( 'blocks', $post_types ) ) {
+		$id        = get_theme_mod( 'product_custom_layout' );
+		$where_col = is_numeric( $id ) ? 'ID' : 'post_name';
+		$block_id  = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_type = 'blocks' AND $where_col = '$id'" );
+
+		if ( $block_id ) {
+			$wp_admin_bar->add_menu( array(
+				'parent' => 'edit',
+				'id'     => 'edit_uxbuilder_product_layout',
+				'title'  => 'Edit product layout with UX Builder',
+				'href'   => ux_builder_edit_url( $post->ID, $block_id ),
+			) );
+		}
 	}
 }
 

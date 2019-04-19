@@ -12,10 +12,12 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates
- * @version 3.4.0
+ * @version 3.6.0
  */
 
 defined( 'ABSPATH' ) || exit;
+
+global $product;
 
 ?>
 <div class="container">
@@ -33,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
 	}
 	?>
 </div><!-- /.container -->
-<div id="product-<?php the_ID(); ?>" <?php fl_woocommerce_version_check( '3.4.0' ) ? wc_product_class() : post_class(); ?>>
+<div id="product-<?php the_ID(); ?>" <?php fl_woocommerce_version_check( '3.4.0' ) ? wc_product_class( '', $product ) : post_class(); ?>>
 	<?php
 	// Get product page layout.
 	wc_get_template_part( 'single-product/layouts/product', flatsome_option( 'product_layout' ) );

@@ -10,6 +10,19 @@ function flatsome_is_support_expired($slug){
   }
 }
 
+/**
+ * Check if support time is invalid.
+ *
+ * @param string $support_ends Support end timestamp.
+ *
+ * @return bool True if invalid false otherwise.
+ */
+function flatsome_is_invalid_support_time( $support_ends ) {
+	$array = array_map( 'trim', explode( ',', $support_ends ) );
+
+	return isset( $array[1] ) && $array[1] == 1970 ? true : false;
+}
+
 /* Check if theme is enabled */
 function flatsome_is_theme_enabled(){
   $slug = basename( get_template_directory() );
@@ -17,6 +30,7 @@ function flatsome_is_theme_enabled(){
   if($purchase_code){
     return true;
   }
+  return false;
 }
 
 /* Automagical updates */
@@ -264,6 +278,11 @@ function wupdates_process_purchase_code_JQ9eJ() {
             update_option( strtolower( $slug ) . '_wup_sold_at', $response['raw_response']['sold_at'] );
 
             // Supported until
+	        if ( ! isset( $response['raw_response']['supported_until'] ) ) {
+		        $dateTime = new DateTime( $response['raw_response']['sold_at'] );
+		        $dateTime->modify( '+6 months' );
+		        $response['raw_response']['supported_until'] = $dateTime->format( 'Y-m-d\TH:i:sP' );
+	        }
             update_option( strtolower( $slug ) . '_wup_supported_until', $response['raw_response']['supported_until'] );
 
             // Buyer

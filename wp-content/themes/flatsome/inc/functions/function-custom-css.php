@@ -447,7 +447,7 @@ input[type='submit'], input[type="button"], button:not(.icon), .button:not(.icon
 <?php
 global $wp_query;
 $cat = $wp_query->get_queried_object();
-$thumbnail_id = get_woocommerce_term_meta( $cat->term_id, 'thumbnail_id', true );
+$thumbnail_id = get_term_meta( $cat->term_id, 'thumbnail_id', true );
 $image = wp_get_attachment_url( $thumbnail_id );
 if($image) echo '.shop-page-title.featured-title .title-bg{background-image: url('.$image.')!important;}';
 ?>

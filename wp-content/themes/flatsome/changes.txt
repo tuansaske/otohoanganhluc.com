@@ -1,3 +1,20 @@
+--- 3.8.3 ---
+FIXED: Category element images went missing
+
+--- 3.8.2 ---
+NEW: WooCommerce 3.6 compatibility.
+NEW: Bubble resolved percentage is now cached for performance.
+NEW: Custom product page edit link in admin bar.
+
+FIXED: Shop page filter appearing on custom shop page (mobile).
+FIXED: Unable to scroll in preview when builder sidebar is hidden.
+FIXED: PHP Notice: Undefined index in product list element.
+FIXED: PHP Notice: Undefined index in product tabs.
+FIXED: Vertical divider on last column of menu.
+FIXED: Corrupted PSD and font file assets.
+
+TWEAK: Improved https permalink requests in builder.
+
 --- 3.8.1 ---
 FIXED: Media modal in UX Builder did not work when Polylang was installed.
 FIXED: Masonry & grid layout getting stuck in builder preview.

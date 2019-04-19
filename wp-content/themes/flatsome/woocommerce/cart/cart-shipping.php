@@ -14,7 +14,7 @@
  *
  * @see https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates
- * @version 3.5.0
+ * @version 3.6.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -24,9 +24,7 @@ $has_calculated_shipping  = ! empty( $has_calculated_shipping );
 $show_shipping_calculator = ! empty( $show_shipping_calculator );
 $calculator_text          = '';
 ?>
-
-<tr class="woocommerce-shipping-totals shipping
-	<?php if(get_theme_mod('cart_boxed_shipping_labels', 0) && 1 < count( $available_methods )) echo 'shipping--boxed'; ?>">
+<tr class="woocommerce-shipping-totals shipping <?php if ( get_theme_mod( 'cart_boxed_shipping_labels', 0 ) && 1 < count( $available_methods ) ) echo 'shipping--boxed'; ?>">
 	<td class="shipping__inner" colspan="2">
 		<table class="shipping__table <?php if ( 1 < count( $available_methods ) ) : ?>shipping__table--multiple<?php endif; ?>">
 			<tbody>
@@ -49,24 +47,24 @@ $calculator_text          = '';
 								</li>
 							<?php endforeach; ?>
 						</ul>
-						<?php if ( is_cart() && get_theme_mod('cart_estimate_text', 1) ) : ?>
+						<?php if ( is_cart() && get_theme_mod( 'cart_estimate_text', 1 ) ) : ?>
 							<p class="woocommerce-shipping-destination">
 								<?php
 								if ( $formatted_destination ) {
 									// Translators: $s shipping destination.
-									printf( esc_html__( 'Estimate for %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' );
+									printf( esc_html__( 'Shipping to %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' );
 									$calculator_text = __( 'Change address', 'woocommerce' );
 								} else {
-									echo esc_html__( 'This is only an estimate. Prices will be updated during checkout.', 'woocommerce' );
+									echo wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( 'Shipping options will be updated during checkout.', 'woocommerce' ) ) );
 								}
 								?>
 							</p>
 						<?php endif; ?>
-					<?php
+						<?php
 					elseif ( ! $has_calculated_shipping || ! $formatted_destination ) :
-						esc_html_e( 'Enter your address to view shipping options.', 'woocommerce' );
+						echo wp_kses_post( apply_filters( 'woocommerce_shipping_may_be_available_html', __( 'Enter your address to view shipping options.', 'woocommerce' ) ) );
 					elseif ( ! is_cart() ) :
-						echo wp_kses_post( apply_filters( 'woocommerce_no_shipping_available_html', __( 'There are no shipping methods available. Please ensure that your address has been entered correctly, or contact us if you need any help.', 'woocommerce' ) ) );
+						echo wp_kses_post( apply_filters( 'woocommerce_no_shipping_available_html', __( 'There are no shipping options available. Please ensure that your address has been entered correctly, or contact us if you need any help.', 'woocommerce' ) ) );
 					else :
 						// Translators: $s shipping destination.
 						echo wp_kses_post( apply_filters( 'woocommerce_cart_no_shipping_available_html', sprintf( esc_html__( 'No shipping options were found for %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) ) );

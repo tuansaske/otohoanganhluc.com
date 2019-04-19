@@ -302,12 +302,17 @@ add_action('woocommerce_after_main_content','flatsome_pages_in_search_results', 
 * @return string
  */
 function flatsome_presentage_bubble( $product ) {
+	$post_id = $product->get_id();
 
 	if ( $product->is_type( 'simple' ) || $product->is_type( 'external' ) ) {
 		$regular_price  = $product->get_regular_price();
 		$sale_price     = $product->get_sale_price();
 		$bubble_content = round( ( ( floatval( $regular_price ) - floatval( $sale_price ) ) / floatval( $regular_price ) ) * 100 );
 	} elseif ( $product->is_type( 'variable' ) ) {
+		if ( $bubble_content = flatsome_percentage_get_cache( $post_id ) ) {
+			return flatsome_percentage_format( $bubble_content );
+		}
+
 		$available_variations = $product->get_available_variations();
 		$maximumper           = 0;
 
@@ -324,7 +329,11 @@ function flatsome_presentage_bubble( $product ) {
 				$maximumper = $percentage;
 			}
 		}
+
 		$bubble_content = sprintf( __( '%s', 'woocommerce' ), $maximumper );
+
+		// Cache percentage for variable products to reduce database queries.
+		flatsome_percentage_set_cache( $post_id, $bubble_content );
 	} else {
 		// Set default and return if the product type doesn't meet specification.
 		$bubble_content = __( 'Sale!', 'woocommerce' );
@@ -332,14 +341,54 @@ function flatsome_presentage_bubble( $product ) {
 		return $bubble_content;
 	}
 
-	// Process custom formatting. Keep mod value double check to process % for default parameter (See sprintf()).
-	$formatting = get_theme_mod( 'sale_bubble_percentage_formatting' );
-	$formatting = $formatting ? $formatting : '-{value}%';
-	$bubble_content = str_replace( '{value}', $bubble_content, $formatting );
-
-	return $bubble_content;
+	return flatsome_percentage_format( $bubble_content );
 }
 
+function flatsome_percentage_get_cache( $post_id ) {
+	if ( fl_woocommerce_version_check( '3.0.0' ) ) {
+		return get_post_meta( $post_id, '_flatsome_product_percentage', true );
+	}
+
+	return false;
+}
+
+function flatsome_percentage_set_cache( $post_id, $bubble_content ) {
+	if ( fl_woocommerce_version_check( '3.0.0' ) ) {
+		update_post_meta( $post_id, '_flatsome_product_percentage', $bubble_content );
+	}
+}
+
+// Process custom formatting. Keep mod value double check
+// to process % for default parameter (See sprintf()).
+function flatsome_percentage_format( $value ) {
+	$formatting = get_theme_mod( 'sale_bubble_percentage_formatting' );
+	$formatting = $formatting ? $formatting : '-{value}%';
+
+	return str_replace( '{value}', $value, $formatting );
+}
+
+// Clear cached percentage whenever a product or variation is saved.
+function flatsome_percentage_clear( $object ) {
+	if ( ! get_theme_mod( 'sale_bubble_percentage' ) ) return;
+	if ( ! fl_woocommerce_version_check( '3.0.0' ) ) return;
+
+	$post_id = 'variation' === $object->get_type()
+		? $object->get_parent_id()
+		: $object->get_id();
+
+	delete_post_meta( $post_id, '_flatsome_product_percentage' );
+}
+add_action( 'woocommerce_before_product_object_save', 'flatsome_percentage_clear' );
+
+// Clear all cached percentages when disabling bubble percentage.
+function flatsome_percentage_clear_all( $value, $old_value ) {
+	if ( ! $value && $old_value && fl_woocommerce_version_check( '3.0.0' ) ) {
+		delete_metadata( 'post', null, '_flatsome_product_percentage', '', true );
+	}
+
+	return $value;
+}
+add_filter( 'pre_set_theme_mod_sale_bubble_percentage', 'flatsome_percentage_clear_all', 10, 2 );
 
 // Account login style
 function flatsome_account_login_lightbox(){
